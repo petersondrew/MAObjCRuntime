@@ -32,11 +32,11 @@
 + (NSArray *)allProtocols
 {
     unsigned int count;
-    Protocol **protocols = objc_copyProtocolList(&count);
+    __unsafe_unretained Protocol **protocols = objc_copyProtocolList(&count);
     
     NSMutableArray *array = [NSMutableArray array];
     for(unsigned i = 0; i < count; i++)
-        [array addObject: [[[self alloc] initWithObjCProtocol: protocols[i]] autorelease]];
+        [array addObject: [[self alloc] initWithObjCProtocol: protocols[i]]];
     
     free(protocols);
     return array;
@@ -44,17 +44,16 @@
 
 + (id)protocolWithObjCProtocol: (Protocol *)protocol
 {
-    return [[[self alloc] initWithObjCProtocol: protocol] autorelease];
+    return [[self alloc] initWithObjCProtocol: protocol];
 }
 
 + (id)protocolWithName: (NSString *)name
 {
-    return [[[self alloc] initWithName: name] autorelease];
+    return [[self alloc] initWithName: name];
 }
 
 - (id)initWithObjCProtocol: (Protocol *)protocol
 {
-    [self release];
     return [[_RTObjCProtocol alloc] initWithObjCProtocol: protocol];
 }
 
@@ -76,7 +75,8 @@
 
 - (NSUInteger)hash
 {
-    return [[self objCProtocol] hash];
+    id foo = [self objCProtocol];
+    return [foo hash];
 }
 
 - (Protocol *)objCProtocol
@@ -93,7 +93,7 @@
 - (NSArray *)incorporatedProtocols
 {
     unsigned int count;
-    Protocol **protocols = protocol_copyProtocolList([self objCProtocol], &count);
+    __unsafe_unretained Protocol **protocols = protocol_copyProtocolList([self objCProtocol], &count);
     
     NSMutableArray *array = [NSMutableArray array];
     for(unsigned i = 0; i < count; i++)

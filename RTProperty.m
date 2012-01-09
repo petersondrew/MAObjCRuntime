@@ -37,9 +37,8 @@
 
 - (void)dealloc
 {
-    [_attrs release];
-    [_name release];
-    [super dealloc];
+    _attrs = nil;
+    _name = nil;
 }
 
 - (NSString *)name
@@ -52,7 +51,7 @@
 
 - (NSDictionary *)attributes
 {
-    return [[_attrs copy] autorelease];
+    return [_attrs copy];
 }
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
@@ -159,23 +158,21 @@
 
 + (id)propertyWithObjCProperty: (objc_property_t)property
 {
-    return [[[self alloc] initWithObjCProperty: property] autorelease];
+    return [[self alloc] initWithObjCProperty: property];
 }
 
 + (id)propertyWithName: (NSString *)name attributes:(NSDictionary *)attributes
 {
-    return [[[self alloc] initWithName: name attributes: attributes] autorelease];
+    return [[self alloc] initWithName: name attributes: attributes];
 }
 
 - (id)initWithObjCProperty: (objc_property_t)property
 {
-    [self release];
     return [[_RTObjCProperty alloc] initWithObjCProperty: property];
 }
 
 - (id)initWithName: (NSString *)name attributes:(NSDictionary *)attributes
 {
-    [self release];
     return [[_RTObjCProperty alloc] initWithName: name attributes: attributes];
 }
 
